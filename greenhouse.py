@@ -31,7 +31,7 @@ try:
     while True:
         time.sleep(1)
         #csv = open('humidade.csv', 'a+')
-        valores_atuais = open('valores_atuais.txt', "w")
+        valores_atuais = open('/var/www/html/current_values.txt', "w")
         localtime = time.asctime(time.localtime(time.time()))
         humidity = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
         time.sleep(1)
@@ -47,13 +47,14 @@ try:
         valores_atuais.write(str(hum_perc)+","+str(lum_perc)+","+str("25")+",")
 
         valores_atuais.write(str(localtime))
+	valores_atuais.close()
         #csv.write(str(humidity) + "," + str(localtime))
         #if(humidity < 1000):
         #    waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
         #    csv.write(", Ativar Rega!")
         #csv.write("\n")
         #csv.close()
-        time.sleep(10) #15min de espera
+        time.sleep(898) #15min de espera
 except KeyboardInterrupt:
     print ("\nCtrl-C pressed.  Program exiting...")
 finally:
