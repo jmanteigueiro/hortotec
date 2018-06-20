@@ -27,7 +27,7 @@ def percentagem_luminosidade(valor_maximo, valor_minimo, valor_atual):
 try:
     soilHumidity(PIN_SENSOR_HUMIDADE_TERRA) #Para descartar o primeiro erro de leitura
     time.sleep(1)
-    waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
+    #waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
     while True:
         time.sleep(1)
         #csv = open('humidade.csv', 'a+')
