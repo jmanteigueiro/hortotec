@@ -10,17 +10,17 @@
 if(isset($_POST['lumini']) && isset($_POST['lumifim']) && isset($_POST['lumifx']) && isset($_POST['regaxhoras']) && isset($_POST['regaifhumambiente']) &&
     isset($_POST['regaifhumsolo']) && isset($_POST['regasegundos']) && isset($_POST['aquecimento'])){
 
-    $data = $_POST['lumini'] . ',' . $_POST['lumifim'] .' ,' . $_POST['lumifx'] . ',' . $_POST['regaxhoras'] . ',' .
+    $data = $_POST['lumini'] . ',' . $_POST['lumifim'] .',' . $_POST['lumifx'] . ',' . $_POST['regaxhoras'] . ',' .
         $_POST['regaifhumambiente'] . ',' . $_POST['regaifhumsolo']. ',' . $_POST['regasegundos']. ',' . $_POST['aquecimento'] . "\n";
-    $ret = file_put_contents('mydata.csv', $data,  LOCK_EX);
+    $ret = file_put_contents('config.txt', $data,  LOCK_EX);
     if($ret === false) {
-        die('There was an error writing this file');
+        die('Erro na escrita do ficheiro.');
     }
     else {
-        echo "$ret bytes written to file";
+        echo "Configuracao guardada com sucesso.";
     }
 }
 else {
-    die('no post data to process');
+    die('Sem dados para processar.');
 }
 ?>
