@@ -23,8 +23,8 @@
             <h1>Hortotec</h1>
             <p class="major">Uma estufa inteligente</p>
             <ul class="actions stacked">
-                <li><a href="#first" class="button big wide smooth-scroll-middle">Dados atuais</a></li>
-                <li><a href="#second" class="button big wide smooth-scroll-middle">Configuração</a></li>
+                <li><a href="#first" class="button">Dados atuais</a></li>
+                <li><a href="#second" class="button">Configuração</a></li>
             </ul>
         </div>
         <div class="image">
@@ -45,7 +45,7 @@
     $last_update = $data[4];
     ?>
 
-    <section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in">
+    <section class="banner style1 orient-right content-align-left image-position-center fullscreen onscroll-image-fade-in onscroll-content-fade-left">
         <div class="content">
             <h2>Dados no momento</h2>
             <section id="first">
@@ -83,11 +83,13 @@
 
     <!-- Three -->
 
-    <section class="wrapper style1 align-center">
+    <section class="wrapper style1 align-center onscroll-content-fade-right">
         <form action="processing.php" method="POST">
             <div class="inner">
                 <br>
-                <input type="submit" name="submit" class="btn btn-info" value="Save Data">
+                <div class ="items style1 align-center onscroll-content-fade-right">
+                    <input type="submit" name="submit" class="button primary" value="Save Data">
+                </div>
                 <div class="items style1 medium onscroll-fade-in">
                     <section id="second">
                         <span class="icon style2 major fa-lightbulb-o"></span>
@@ -129,6 +131,16 @@
             </div>
         </form>
     </section>
+
+    <footer class="wrapper style1 align-center">
+        <div class="inner">
+            <ul class="icons">
+                <li><a href="mailto:hortotec@ubi.pt" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
+                <li><a href="https://github.com/jmanteigueiro/hortotec" class="icon style2 fa-hashtag"><span class="label">GitHub</span></a></li>
+            </ul>
+            <p>© Hortotec</p>
+        </div>
+    </footer>
 
 </div>
 
