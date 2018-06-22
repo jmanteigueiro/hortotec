@@ -1,34 +1,17 @@
-# !/usr/local/bin/python
+#!/usr/bin/python
+import Adafruit_DHT
 
-import RPi.GPIO as GPIO
-import time
-
-GPIO.setmode(GPIO.BOARD)
-
-def temperature(pin_to_circuit):
-    global count
+def humidityTemperature(sensor, pin):
+    global humidity, temperature
     try:
-        #time.sleep(0.1)
-        count = 0
-
-        # Output on the pin for
-        GPIO.setup(pin_to_circuit, GPIO.OUT)
-        GPIO.output(pin_to_circuit, GPIO.LOW)
-        time.sleep(0.1)
-
-        # Change the pin back to input
-        GPIO.setup(pin_to_circuit, GPIO.IN)
-
-        # Count until the pin goes highz<
-        while (GPIO.input(pin_to_circuit) == GPIO.LOW):
-            count += 1
-            if(count > 50000): # min
-                break
+       humidity, temperature = Adafruit_DHT.read_retry(sensor, pin)
 
     except KeyboardInterrupt:
         return 0
     finally:
-        #if(count < 500): # max
-        #    count = 500
-        return count
+       if humidity is not None and temperature is not None:
+          return [temperature, humidity]
+       else:
+          return [None, None]
+
 

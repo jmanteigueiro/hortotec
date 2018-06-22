@@ -41,7 +41,8 @@
     $humidity = $data[0];
     $luminosity = $data[1];
     $temperature = $data[2];
-    $last_update = $data[3];
+    $air_humidity = $data[3];
+    $last_update = $data[4];
     ?>
 
     <section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in">
@@ -56,6 +57,13 @@
                 <p>Humidade do Solo:
                     <strong>
                         <?php  echo htmlspecialchars($humidity);?>
+                        %
+                    </strong>
+                </p>
+
+                <p>Humidade do Ar:
+                    <strong>
+                        <?php  echo htmlspecialchars($air_humidity);?>
                         %
                     </strong>
                 </p>
