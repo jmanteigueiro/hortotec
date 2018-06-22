@@ -1,2 +1,2 @@
-# hortotec-
+# Hortotec
 Uma estufa inteligente

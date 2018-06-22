@@ -2,6 +2,7 @@ from __future__ import division
 from soil_return import soilHumidity
 from water_return import waterPump
 from luminosity_return import luminosity
+from temperature_return import temperature
 import RPi.GPIO as GPIO
 import time
 import csv
@@ -9,6 +10,7 @@ import csv
 PIN_SENSOR_LUMINOSIDADE = 7
 PIN_SENSOR_HUMIDADE_TERRA = 37
 PIN_BOMBA_AGUA = 40
+#PIN_SENSOR_TEMPERATURA = 35
 TEMPO_BOMBA_AGUA = 2 #segundos
 
 def percentagem(valor_maximo, valor_atual):
@@ -26,22 +28,37 @@ def percentagem_luminosidade(valor_maximo, valor_minimo, valor_atual):
 
 try:
     soilHumidity(PIN_SENSOR_HUMIDADE_TERRA) #Para descartar o primeiro erro de leitura
-    time.sleep(1)
+    time.sleep(5)
     #waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
     while True:
-        time.sleep(1)
         #csv = open('humidade.csv', 'a+')
         valores_atuais = open('/var/www/html/current_values.txt', "w")
         localtime = time.asctime(time.localtime(time.time()))
-        humidity = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
-        time.sleep(1)
-        lumino = luminosity(PIN_SENSOR_LUMINOSIDADE)
-        time.sleep(1)
-        hum_perc = percentagem(300000, humidity)
+        humidity1 = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
+        time.sleep(5)
+        humidity2 = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
+	time.sleep(5)
+	humidity3 = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
+	humidity = (humidity1 + humidity2 + humidity3) / 3
+	time.sleep(2)
+	lumino1 = luminosity(PIN_SENSOR_LUMINOSIDADE)
+        time.sleep(2)
+	lumino2 = luminosity(PIN_SENSOR_LUMINOSIDADE)
+	time.sleep(2)
+	lumino3 = luminosity(PIN_SENSOR_LUMINOSIDADE)
+	lumino = (lumino1 + lumino2 + lumino3) / 3
+	time.sleep(2)
+#	temp1 = temperature(PIN_SENSOR_TEMPERATURA)
+#        time.sleep(2)
+#	temp2 = temperature(PIN_SENSOR_TEMPERATURA)
+#	time.sleep(2)
+#	temp3 = temperature(PIN_SENSOR_TEMPERATURA)
+#	temp = (temp1 + temp2 + temp3) / 3
+	hum_perc = percentagem(300000, humidity)
         lum_perc = percentagem_luminosidade(500, 50000, lumino)
         print("HUM: " + str(humidity) + " Percent: " + str(hum_perc))
         print("LUM: " + str(lumino) + " Percent: " + str(lum_perc))
-        #print("Humidade: " + str(humidity))
+#       print("TEMP: " + str(temp))
 
         #escrita dos dados
         valores_atuais.write(str(hum_perc)+","+str(lum_perc)+","+str("25")+",")
