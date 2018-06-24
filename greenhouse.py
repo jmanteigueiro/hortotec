@@ -14,7 +14,7 @@ PIN_SENSOR_HUMIDADE_TERRA = 37
 PIN_BOMBA_AGUA = 40
 PIN_SENSOR_TEMPERATURA = 17 #gpio
 DHT = 22
-TEMPO_BOMBA_AGUA = 2 #segundos
+TEMPO_BOMBA_AGUA = 4 #segundos
 
 PRETENDIDO_LUMINOSIDADE_PERCENTAGEM = 0
 PRETENDIDO_LUMINOSIDADE_HORA_INICIO = 0
@@ -44,7 +44,7 @@ def updatePretendido():
             PRETENDIDO_LUMINOSIDADE_MINUTO_FIM = 0
     if(valores[2] != ""):
         PRETENDIDO_LUMINOSIDADE_PERCENTAGEM = valores[2]
-            
+
 
 
 def percentagem(valor_maximo, valor_atual):
@@ -71,7 +71,7 @@ try:
         soil_humidity = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
         luminosity = luminosity(PIN_SENSOR_LUMINOSIDADE)
         [temperature, air_humidity] = humidityTemperature(DHT, PIN_SENSOR_TEMPERATURA)
-        hum_perc = percentagem(300000, soil_humidity)
+        hum_perc = percentagem(100000, soil_humidity)
         lum_perc = percentagem_luminosidade(500, 50000, luminosity)
         print("HUM SOLO: " + str(soil_humidity) + " Percent: " + str(hum_perc))
         print("LUM: " + str(luminosity) + " Percent: " + str(lum_perc))
@@ -87,6 +87,10 @@ try:
         tempo = "%s %d:%d:%d %d/%d/%d" % (dia_semana[now.weekday()], now.hour+1, now.minute, now.second, now.day, now.month, now.year) #+1 porque hora está atrasada
         valores_atuais.write(str(tempo))
         valores_atuais.close()
+	#---
+#	time.sleep(5)
+#	waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
+
         #csv.write(str(humidity) + "," + str(localtime))
         #if(humidity < 1000):
         #    waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)

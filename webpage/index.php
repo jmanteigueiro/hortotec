@@ -45,10 +45,10 @@
     $last_update = $data[4];
     ?>
 
-    <section class="banner style1 orient-right content-align-left image-position-center fullscreen onscroll-image-fade-in onscroll-content-fade-left">
+    <section id="first" class="banner style1 orient-right content-align-left image-position-center fullscreen onscroll-image-fade-in onscroll-content-fade-left">
         <div class="content">
             <h2>Dados no momento</h2>
-            <section id="first">
+            <section>
                 <p>Temperatura:
                     <strong>
                         <?php  echo htmlspecialchars($temperature);?>
@@ -83,7 +83,7 @@
 
     <!-- Three -->
 
-    <section class="wrapper style1 align-center onscroll-content-fade-right">
+    <section id="second" class="wrapper style1 align-center onscroll-content-fade-right">
         <form action="processing.php" method="POST">
             <div class="inner">
                 <br>
@@ -91,32 +91,32 @@
                     <input type="submit" name="submit" class="button primary" value="Save Data">
                 </div>
                 <div class="items style1 medium onscroll-fade-in">
-                    <section id="second">
+                    <section>
                         <span class="icon style2 major fa-lightbulb-o"></span>
                         <h3>Luminosidade</h3>
-                        <p><label>Ínício [Horas]</label>
+                        <p><label>Ínício [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumini"
                                    aria-describedby="emailHelp" placeholder="07:00"></p>
-                        <p><label>Fim [Horas]</label>
+                        <p><label>Fim [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumifim"
                                    aria-describedby="emailHelp" placeholder="20:00"></p>
-                        <p><label>Automático [0-100]</label>
+                        <p><label>Automático [0-100]%</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumifx"
                                    aria-describedby="emailHelp" placeholder="50"></p>
                     </section>
                     <section>
                         <span class="icon style2 major fa fa-tint"></span>
                         <h3>Rega</h3>
-                        <p><label>Ínício [Horas]</label>
+                        <p><label>Ínício [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaxhoras"
                                    aria-describedby="emailHelp" placeholder="19:00"></p>
-                        <p><label>Fim [Horas]</label>
+                        <p><label>Fim [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaifhumambiente"
                                    aria-describedby="emailHelp" placeholder="20:00"></p>
-                        <p><label>Automático [0-100]</label>
+                        <p><label>Automático [0-100]%</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaifhumsolo"
                                    aria-describedby="emailHelp" placeholder="50"></p>
-                        <p><label>Segundos [0-15]</label>
+                        <p><label>Tempo de rega [0-15]seg</label>
                             <input type="text" style="text-align: center" class="form-control" name="regasegundos"
                                    aria-describedby="emailHelp" placeholder="5">
                     </section>
