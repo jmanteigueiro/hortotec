@@ -4,6 +4,8 @@ from soil_return import soilHumidity
 from water_return import waterPump
 from luminosity_return import luminosity
 from temperature_return import humidityTemperature
+from led_luminosity import riseLuminosity, turnOnLuminosity, turnOffLuminosity
+from led_temperature import riseTemperature, turnOnTemperature, turnOffTemperature
 import RPi.GPIO as GPIO
 import time
 import datetime
@@ -13,6 +15,8 @@ PIN_SENSOR_LUMINOSIDADE = 7
 PIN_SENSOR_HUMIDADE_TERRA = 37
 PIN_BOMBA_AGUA = 40
 PIN_SENSOR_TEMPERATURA = 17 #gpio
+PIN_LED_LUMINOSIDADE = 38
+PIN_LED_TEMPERATURA = 36
 DHT = 22
 TEMPO_BOMBA_AGUA = 4 #segundos
 
@@ -65,6 +69,12 @@ try:
     #updatePretendido()
     #time.sleep(50)
     #waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
+    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+    time.sleep(2)
+    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+    turnOnTemperature(PIN_LED_TEMPERATURA)
+    time.sleep(2)
+    turnOffTemperature(PIN_LED_TEMPERATURA)
     while True:
         valores_atuais = open('/var/www/html/current_values.txt', "w")
         now = datetime.datetime.now()
@@ -87,9 +97,9 @@ try:
         tempo = "%s %d:%d:%d %d/%d/%d" % (dia_semana[now.weekday()], now.hour+1, now.minute, now.second, now.day, now.month, now.year) #+1 porque hora está atrasada
         valores_atuais.write(str(tempo))
         valores_atuais.close()
-	#---
-#	time.sleep(5)
-#	waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
+        #---
+        #	time.sleep(5)
+        #	waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
 
         #csv.write(str(humidity) + "," + str(localtime))
         #if(humidity < 1000):
