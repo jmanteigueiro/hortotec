@@ -10,6 +10,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
+	<!-- https://stackoverflow.com/questions/21096034/kill-a-process-from-website -->
+	<?php 
+		$kill_python = system('pkill python', $killval); 
+		$init_python = system('greenhouse.sh', $initval);
+	?>
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 </head>
 <body class="is-preload">
