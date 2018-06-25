@@ -40,6 +40,24 @@ def updatePretendido():
     fp = open('/var/www/html/config.txt', "r")
     valores_pretendidos = fp.readline()
     valores = valores_pretendidos.split(",")
+
+    global PRETENDIDO_LUMINOSIDADE_PERCENTAGEM
+    global PRETENDIDO_LUMINOSIDADE_HORA_INICIO
+    global PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO
+    global PRETENDIDO_LUMINOSIDADE_HORA_FIM
+    global PRETENDIDO_LUMINOSIDADE_MINUTO_FIM
+
+    global PRETENDIDO_REGA_HORA_INICIO
+    global PRETENDIDO_REGA_MINUTO_INICIO
+    global PRETENDIDO_REGA_HORA_FIM
+    global PRETENDIDO_REGA_MINUTO_FIM
+    global PRETENDIDO_REGA_HUMIDADE
+    global PRETENDIDO_REGA_SEGUNDOS
+
+    global PRETENDIDO_TEMPERATURA_GRAUS
+
+
+
     # Formato
     # luminosidade
     # hora:minutos (inicio), hora:minutos (fim), intensidade
@@ -94,10 +112,10 @@ def updatePretendido():
         try:
             PRETENDIDO_TEMPERATURA_GRAUS = valores[7]
         except Exception:
-            PRETENDIDO_TEMPERATURA_GRAUS = 25 # 25ºC
+            PRETENDIDO_TEMPERATURA_GRAUS = 25.5 # 25ºC
 
     fp.close()
-
+    print(PRETENDIDO_TEMPERATURA_GRAUS)
 
 def percentagem(valor_maximo, valor_atual):
     percent = (valor_atual * 100 / valor_maximo)
@@ -117,13 +135,14 @@ try:
     #updatePretendido()
     #time.sleep(50)
     #waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
-    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-    time.sleep(2)
-    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-    turnOnTemperature(PIN_LED_TEMPERATURA)
-    time.sleep(2)
-    turnOffTemperature(PIN_LED_TEMPERATURA)
+    #turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+    #time.sleep(2)
+    #turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+    #turnOnTemperature(PIN_LED_TEMPERATURA)
+    #time.sleep(2)
+    #turnOffTemperature(PIN_LED_TEMPERATURA)
     while True:
+        GPIO.setwarnings(False)
         updatePretendido()
         valores_atuais = open('/var/www/html/current_values.txt', "w")
         now = datetime.datetime.now()
@@ -144,14 +163,20 @@ try:
         valores_atuais.write(str(tempo))
         valores_atuais.close()
 
+        time.sleep(2)
         # Temperatura pretendida é superior à atual, ligar aquecimento
+        print(PRETENDIDO_TEMPERATURA_GRAUS)
         if(PRETENDIDO_TEMPERATURA_GRAUS != None):
-            if(PRETENDIDO_TEMPERATURA_GRAUS > temperature):
+            print("TOP")
+            if(float(PRETENDIDO_TEMPERATURA_GRAUS) > float(temperature)):
                 turnOnTemperature(PIN_LED_TEMPERATURA)
             else:
                 turnOffTemperature(PIN_LED_TEMPERATURA)
         else:
+            print("NAO")
             turnOffTemperature(PIN_LED_TEMPERATURA)
+
+        print("TEST")
 
         # Luminosidade dentro do horário
         if(PRETENDIDO_LUMINOSIDADE_HORA_INICIO != None and PRETENDIDO_LUMINOSIDADE_HORA_FIM != None and PRETENDIDO_LUMINOSIDADE_PERCENTAGEM != None and PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO != None and PRETENDIDO_LUMINOSIDADE_MINUTO_FIM != None):
@@ -194,8 +219,10 @@ try:
         #    csv.write(", Ativar Rega!")
         #csv.write("\n")
         #csv.close()
-        time.sleep(898) #15min de espera
+        #time.sleep(898) #15min de espera
+	break
 except KeyboardInterrupt:
     print ("\nCtrl-C pressed.  Program exiting...")
 finally:
-    GPIO.cleanup()  # run on exit
+    #GPIO.cleanup()  # run on exit
+    exit(1)

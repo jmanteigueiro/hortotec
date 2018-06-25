@@ -27,5 +27,7 @@ def turnOnLuminosity(pin_to_circuit):
 
 def turnOffLuminosity(pin_to_circuit):
     LED = pin_to_circuit
+    # Set the LED GPIO pin as an output
+    GPIO.setup(LED, GPIO.OUT)
     # Turn the GPIO pin off
     GPIO.output(LED, False)
