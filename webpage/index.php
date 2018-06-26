@@ -43,9 +43,7 @@
     $temperature = $data[2];
     $air_humidity = $data[3];
     $last_update = $data[4];
-    ?>
 
-    <?php
     $fp = new SPLFileObject('config.txt');
     foreach($fp as $line2) {
         $data2 = preg_split("/[,]/", $line2);
@@ -58,22 +56,23 @@
     $percentRega = $data2[5];
     $tempoRega = $data2[6];
     $temp = $data2[7];
-    if($startLum == "")
+
+    if($startLum == '')
         $startLum = "02:00";
-    if($endLum == "")
+    if($endLum == '')
         $endLum = "08:00";
-    if($percentLum == "")
-        $percentLum = "30";
-    if($startRega == "")
+    if($percentLum == '')
+        $percentLum = "22";
+    if($startRega == '')
         $startRega = "19:00";
-    if($endRega == "")
+    if($endRega == '')
         $endRega = "23:00";
-    if($percentRega == "")
+    if($percentRega == '')
         $percentRega = "5";
-    if($tempoRega == "")
+    if($tempoRega == '')
         $tempoRega = "3";
-    if($temp == "")
-        $tempPret = "25";
+    if($temp == '')
+        $temp = "25";
 
     ?>
 
@@ -89,7 +88,7 @@
                 <p>Humidade do Solo:
                     <strong>
                         <?php  echo htmlspecialchars($humidity);?>
-                        %
+              		  %
                     </strong>
                 </p>
 
@@ -157,7 +156,7 @@
                         <h3>Ambiente</h3>
                         <p><label>Temperatura pretendida [ºC]</label>
                             <input type="text" style="text-align: center" class="form-control" name="aquecimento"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($tempPret)?>></p>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($temp)?>></p>
                     </section>
                 </div>
             </div>
