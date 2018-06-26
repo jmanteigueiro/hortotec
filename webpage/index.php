@@ -10,8 +10,8 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
-	<!-- https://stackoverflow.com/questions/21096034/kill-a-process-from-website -->
-	<noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
+    <!-- https://stackoverflow.com/questions/21096034/kill-a-process-from-website -->
+    <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 </head>
 <body class="is-preload">
 <!-- Wrapper -->
@@ -43,6 +43,38 @@
     $temperature = $data[2];
     $air_humidity = $data[3];
     $last_update = $data[4];
+    ?>
+
+    <?php
+    $fp = new SPLFileObject('config.txt');
+    foreach($fp as $line2) {
+        $data2 = preg_split("/[,]/", $line2);
+    }
+    $startLum = $data2[0];
+    $endLum = $data2[1];
+    $percentLum = $data2[2];
+    $startRega = $data2[3];
+    $endRega = $data2[4];
+    $percentRega = $data2[5];
+    $tempoRega = $data2[6];
+    $temp = $data2[7];
+    if($startLum == "")
+        $startLum = "02:00";
+    if($endLum == "")
+        $endLum = "08:00";
+    if($percentLum == "")
+        $percentLum = "30";
+    if($startRega == "")
+        $startRega = "19:00";
+    if($endRega == "")
+        $endRega = "23:00";
+    if($percentRega == "")
+        $percentRega = "5";
+    if($tempoRega == "")
+        $tempoRega = "3";
+    if($temp == "")
+        $tempPret = "25";
+
     ?>
 
     <section id="first" class="banner style1 orient-right content-align-left image-position-center fullscreen onscroll-image-fade-in onscroll-content-fade-left">
@@ -96,36 +128,36 @@
                         <h3>Luminosidade</h3>
                         <p><label>Ínício [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumini"
-                                   aria-describedby="emailHelp" placeholder="07:00"></p>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($startLum)?>></p>
                         <p><label>Fim [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumifim"
-                                   aria-describedby="emailHelp" placeholder="20:00"></p>
-                        <p><label>Automático [0-100]%</label>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($endLum)?>></p>
+                        <p><label>Percentagem pretendida [0-100]%</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumifx"
-                                   aria-describedby="emailHelp" placeholder="50"></p>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($percentLum)?>></p>
                     </section>
                     <section>
                         <span class="icon style2 major fa fa-tint"></span>
                         <h3>Rega</h3>
                         <p><label>Ínício [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaxhoras"
-                                   aria-describedby="emailHelp" placeholder="19:00"></p>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($startRega)?>></p>
                         <p><label>Fim [HH:MM]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaifhumambiente"
-                                   aria-describedby="emailHelp" placeholder="20:00"></p>
-                        <p><label>Automático [0-100]%</label>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($endRega)?>></p>
+                        <p><label>Percentagem pretendida [0-100]%</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaifhumsolo"
-                                   aria-describedby="emailHelp" placeholder="50"></p>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($percentRega)?>></p>
                         <p><label>Tempo de rega [0-15]seg</label>
                             <input type="text" style="text-align: center" class="form-control" name="regasegundos"
-                                   aria-describedby="emailHelp" placeholder="5">
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($tempoRega)?>>
                     </section>
                     <section>
                         <span class="icon style2 major fa fa-thermometer-3"></span>
                         <h3>Ambiente</h3>
-                        <p><label>Temperatura [ºC]</label>
+                        <p><label>Temperatura pretendida [ºC]</label>
                             <input type="text" style="text-align: center" class="form-control" name="aquecimento"
-                                   aria-describedby="emailHelp" placeholder="25"></p>
+                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($tempPret)?>></p>
                     </section>
                 </div>
             </div>
