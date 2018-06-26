@@ -149,7 +149,7 @@ try:
         print("TEMP: " + str('{0:0.1f}ºC'.format(temperature)))
 
         #escrita dos dados
-        valores_atuais.write(str(hum_perc)+","+str(lum_perc)+","+str('{0:0.1f}'.format(temperature))+","+str('{0:0.1f}'.format(air_humidity))+",")
+        valores_atuais.write(str(('%.1f' % hum_perc).rstrip('0').rstrip('.'))+","+str(('%.1f' % lum_perc).rstrip('0').rstrip('.'))+","+str('{0:0.1f}'.format(temperature))+","+str('{0:0.1f}'.format(air_humidity))+",")
         dia_semana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"]
 
         tempo = "%s " % (dia_semana[now.weekday()])
@@ -217,7 +217,32 @@ try:
             turnOffLuminosity(PIN_LED_LUMINOSIDADE)
 
         # Rega dentro do horário
-
+        if PRETENDIDO_REGA_HORA_INICIO is not None and PRETENDIDO_REGA_HORA_FIM is not None and PRETENDIDO_REGA_MINUTO_INICIO is not None and PRETENDIDO_REGA_MINUTO_FIM is not None and PRETENDIDO_REGA_HUMIDADE is not None and PRETENDIDO_REGA_SEGUNDOS is not None:
+            #07:00 - 23:00
+            if int(PRETENDIDO_REGA_HORA_INICIO) < int(PRETENDIDO_REGA_HORA_FIM):
+                if PRETENDIDO_REGA_HORA_INICIO < now.hour < PRETENDIDO_REGA_HORA_FIM:
+                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                        waterPump(PIN_BOMBA_AGUA)
+                elif now.hour == PRETENDIDO_REGA_HORA_INICIO and now.minute >= PRETENDIDO_REGA_MINUTO_INICIO:
+                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+                elif now.hour == PRETENDIDO_REGA_HORA_FIM and now.minute < PRETENDIDO_REGA_MINUTO_FIM:
+                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+            #23:00 - 03:00
+            else:
+                if PRETENDIDO_REGA_HORA_INICIO > now.hour:
+                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+                elif now.hour == PRETENDIDO_REGA_HORA_INICIO and now.minute >= PRETENDIDO_REGA_MINUTO_INICIO:
+                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+                elif now.hour < PRETENDIDO_REGA_HORA_FIM:
+                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+                elif now.hour == PRETENDIDO_REGA_HORA_FIM and now.minute < PRETENDIDO_REGA_MINUTO_FIM:
+                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
 
 
 
