@@ -66,7 +66,7 @@ def updatePretendido():
     # temperatura
     # graus
 
-    if(valores[0] != "" and valores[1] != ""):
+    if valores[0] != "" and valores[1] != "":
         try:
             PRETENDIDO_LUMINOSIDADE_HORA_INICIO = int(valores[0].split(":")[0])
             PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO = int(valores[0].split(":")[1])
@@ -78,13 +78,13 @@ def updatePretendido():
             PRETENDIDO_LUMINOSIDADE_HORA_FIM = 6
             PRETENDIDO_LUMINOSIDADE_MINUTO_FIM = 30
 
-    if(valores[2] != ""):
+    if valores[2] != "":
         try:
             PRETENDIDO_LUMINOSIDADE_PERCENTAGEM = int(valores[2])
         except Exception:
             PRETENDIDO_LUMINOSIDADE_PERCENTAGEM = 50 # 50%
 
-    if (valores[3] != "" and valores[4] != ""):
+    if valores[3] != "" and valores[4] != "":
         try:
             PRETENDIDO_REGA_HORA_INICIO = int(valores[3].split(":")[0])
             PRETENDIDO_REGA_MINUTO_INICIO = int(valores[3].split(":")[1])
@@ -96,19 +96,19 @@ def updatePretendido():
             PRETENDIDO_REGA_HORA_FIM = 20
             PRETENDIDO_REGA_MINUTO_FIM = 0
 
-    if(valores[5] != ""):
+    if valores[5] != "":
         try:
             PRETENDIDO_REGA_HUMIDADE = int(valores[5])
         except Exception:
             PRETENDIDO_REGA_HUMIDADE = 5 # 5%
 
-    if(valores[6] != ""):
+    if valores[6] != "":
         try:
             PRETENDIDO_REGA_SEGUNDOS = int(valores[6])
         except Exception:
             PRETENDIDO_REGA_SEGUNDOS = 4
 
-    if(valores[7] != ""):
+    if valores[7] != "":
         try:
             PRETENDIDO_TEMPERATURA_GRAUS = int(valores[7])
         except Exception:
@@ -131,133 +131,117 @@ def percentagem_luminosidade(valor_maximo, valor_minimo, valor_atual):
 
 try:
     soilHumidity(PIN_SENSOR_HUMIDADE_TERRA) #Para descartar o primeiro erro de leitura
+    time.sleep(2)
+    GPIO.setwarnings(False)
+    updatePretendido()
+    valores_atuais = open('/var/www/html/current_values.txt', "w")
+    now = datetime.datetime.now()
+    soil_humidity = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
+    luminosity = luminosity(PIN_SENSOR_LUMINOSIDADE)
+    [temperature, air_humidity] = humidityTemperature(DHT, PIN_SENSOR_TEMPERATURA)
+    hum_perc = percentagem(40000, soil_humidity)
+    lum_perc = percentagem_luminosidade(500, 50000, luminosity)
+    print("HUM SOLO: " + str(soil_humidity) + " Percent: " + str(('%.1f' % hum_perc).rstrip('0').rstrip('.')))
+    print("LUM: " + str(luminosity) + " Percent: " + str(('%.1f' % lum_perc).rstrip('0').rstrip('.')))
+    print("HUM AR: " + str('{0:0.1f}%'.format(air_humidity)))
+    print("TEMP: " + str('{0:0.1f}ºC'.format(temperature)))
 
+    #escrita dos dados
+    valores_atuais.write(str(('%.1f' % hum_perc).rstrip('0').rstrip('.'))+","+str(('%.1f' % lum_perc).rstrip('0').rstrip('.'))+","+str('{0:0.1f}'.format(temperature))+","+str('{0:0.1f}'.format(air_humidity))+",")
+    dia_semana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"]
 
-    while True:
-        GPIO.setwarnings(False)
-        updatePretendido()
-        valores_atuais = open('/var/www/html/current_values.txt', "w")
-        now = datetime.datetime.now()
-        soil_humidity = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
-        luminosity = luminosity(PIN_SENSOR_LUMINOSIDADE)
-        [temperature, air_humidity] = humidityTemperature(DHT, PIN_SENSOR_TEMPERATURA)
-        hum_perc = percentagem(40000, soil_humidity)
-        lum_perc = percentagem_luminosidade(500, 50000, luminosity)
-        print("HUM SOLO: " + str(soil_humidity) + " Percent: " + str(('%.1f' % hum_perc).rstrip('0').rstrip('.')))
-        print("LUM: " + str(luminosity) + " Percent: " + str(('%.1f' % lum_perc).rstrip('0').rstrip('.')))
-        print("HUM AR: " + str('{0:0.1f}%'.format(air_humidity)))
-        print("TEMP: " + str('{0:0.1f}ºC'.format(temperature)))
+    tempo = "%s " % (dia_semana[now.weekday()])
+    tempo += now.strftime("%H:%M:%S %d/%m/%Y")
+    valores_atuais.write(str(tempo))
+    valores_atuais.close()
 
-        #escrita dos dados
-        valores_atuais.write(str(('%.1f' % hum_perc).rstrip('0').rstrip('.'))+","+str(('%.1f' % lum_perc).rstrip('0').rstrip('.'))+","+str('{0:0.1f}'.format(temperature))+","+str('{0:0.1f}'.format(air_humidity))+",")
-        dia_semana = ["Seg", "Ter", "Qua", "Qui", "Sex", "Sab", "Dom"]
+    time.sleep(2)
 
-        tempo = "%s " % (dia_semana[now.weekday()])
-        tempo += now.strftime("%H:%M:%S %d/%m/%Y")
-        valores_atuais.write(str(tempo))
-        valores_atuais.close()
-
-        time.sleep(2)
-
-        # Temperatura pretendida é superior à atual, ligar aquecimento
-        if(PRETENDIDO_TEMPERATURA_GRAUS != None):
-            if(float(PRETENDIDO_TEMPERATURA_GRAUS) > float(temperature)):
-                turnOnTemperature(PIN_LED_TEMPERATURA)
-            else:
-                turnOffTemperature(PIN_LED_TEMPERATURA)
+    # Temperatura pretendida é superior à atual, ligar aquecimento
+    if PRETENDIDO_TEMPERATURA_GRAUS != None:
+        if float(PRETENDIDO_TEMPERATURA_GRAUS) > float(temperature):
+            turnOnTemperature(PIN_LED_TEMPERATURA)
         else:
             turnOffTemperature(PIN_LED_TEMPERATURA)
+    else:
+        turnOffTemperature(PIN_LED_TEMPERATURA)
 
-        # Luminosidade dentro do horário
-        if PRETENDIDO_LUMINOSIDADE_HORA_INICIO is not None and PRETENDIDO_LUMINOSIDADE_HORA_FIM is not None and PRETENDIDO_LUMINOSIDADE_PERCENTAGEM is not None and PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO is not None and PRETENDIDO_LUMINOSIDADE_MINUTO_FIM is not None:
-            #07:00 - 23:00
-            if int(PRETENDIDO_LUMINOSIDADE_HORA_INICIO) < int(PRETENDIDO_LUMINOSIDADE_HORA_FIM):
-                if PRETENDIDO_LUMINOSIDADE_HORA_INICIO < now.hour < PRETENDIDO_LUMINOSIDADE_HORA_FIM:
-                    if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
-                        turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-                    else:
-                        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-                elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_INICIO and now.minute >= PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO:
-                    if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
-                        turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-                    else:
-                        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-                elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_FIM and now.minute < PRETENDIDO_LUMINOSIDADE_MINUTO_FIM:
-                    if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
-                        turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-                    else:
-                        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+    # Luminosidade dentro do horário
+    if PRETENDIDO_LUMINOSIDADE_HORA_INICIO is not None and PRETENDIDO_LUMINOSIDADE_HORA_FIM is not None and PRETENDIDO_LUMINOSIDADE_PERCENTAGEM is not None and PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO is not None and PRETENDIDO_LUMINOSIDADE_MINUTO_FIM is not None:
+        #07:00 - 23:00
+        if int(PRETENDIDO_LUMINOSIDADE_HORA_INICIO) < int(PRETENDIDO_LUMINOSIDADE_HORA_FIM):
+            if PRETENDIDO_LUMINOSIDADE_HORA_INICIO < now.hour < PRETENDIDO_LUMINOSIDADE_HORA_FIM:
+                if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
+                    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
                 else:
                     turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-            #23:00 - 03:00
+            elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_INICIO and now.minute >= PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO:
+                if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
+                    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+                else:
+                    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+            elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_FIM and now.minute < PRETENDIDO_LUMINOSIDADE_MINUTO_FIM:
+                if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
+                    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+                else:
+                    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
             else:
-                if PRETENDIDO_LUMINOSIDADE_HORA_INICIO > now.hour:
-                    if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
-                        turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-                    else:
-                        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-                elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_INICIO and now.minute >= PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO:
-                    if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
-                        turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-                    else:
-                        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-                elif now.hour < PRETENDIDO_LUMINOSIDADE_HORA_FIM:
-                    if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
-                        turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-                    else:
-                        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-                elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_FIM and now.minute < PRETENDIDO_LUMINOSIDADE_MINUTO_FIM:
-                    if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
-                        turnOnLuminosity(PIN_LED_LUMINOSIDADE)
-                    else:
-                        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-                else:
-                    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+                turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+        #23:00 - 03:00
         else:
-            turnOffLuminosity(PIN_LED_LUMINOSIDADE)
-
-        # Rega dentro do horário
-        if PRETENDIDO_REGA_HORA_INICIO is not None and PRETENDIDO_REGA_HORA_FIM is not None and PRETENDIDO_REGA_MINUTO_INICIO is not None and PRETENDIDO_REGA_MINUTO_FIM is not None and PRETENDIDO_REGA_HUMIDADE is not None and PRETENDIDO_REGA_SEGUNDOS is not None:
-            #07:00 - 23:00
-            if int(PRETENDIDO_REGA_HORA_INICIO) < int(PRETENDIDO_REGA_HORA_FIM):
-                if PRETENDIDO_REGA_HORA_INICIO < now.hour < PRETENDIDO_REGA_HORA_FIM:
-                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
-                        waterPump(PIN_BOMBA_AGUA)
-                elif now.hour == PRETENDIDO_REGA_HORA_INICIO and now.minute >= PRETENDIDO_REGA_MINUTO_INICIO:
-                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
-                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
-                elif now.hour == PRETENDIDO_REGA_HORA_FIM and now.minute < PRETENDIDO_REGA_MINUTO_FIM:
-                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
-                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
-            #23:00 - 03:00
+            if PRETENDIDO_LUMINOSIDADE_HORA_INICIO > now.hour:
+                if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
+                    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+                else:
+                    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+            elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_INICIO and now.minute >= PRETENDIDO_LUMINOSIDADE_MINUTO_INICIO:
+                if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
+                    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+                else:
+                    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+            elif now.hour < PRETENDIDO_LUMINOSIDADE_HORA_FIM:
+                if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
+                    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+                else:
+                    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+            elif now.hour == PRETENDIDO_LUMINOSIDADE_HORA_FIM and now.minute < PRETENDIDO_LUMINOSIDADE_MINUTO_FIM:
+                if PRETENDIDO_LUMINOSIDADE_PERCENTAGEM >= int(lum_perc):
+                    turnOnLuminosity(PIN_LED_LUMINOSIDADE)
+                else:
+                    turnOffLuminosity(PIN_LED_LUMINOSIDADE)
             else:
-                if PRETENDIDO_REGA_HORA_INICIO > now.hour:
-                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
-                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
-                elif now.hour == PRETENDIDO_REGA_HORA_INICIO and now.minute >= PRETENDIDO_REGA_MINUTO_INICIO:
-                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
-                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
-                elif now.hour < PRETENDIDO_REGA_HORA_FIM:
-                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
-                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
-                elif now.hour == PRETENDIDO_REGA_HORA_FIM and now.minute < PRETENDIDO_REGA_MINUTO_FIM:
-                    if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
-                        waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+                turnOffLuminosity(PIN_LED_LUMINOSIDADE)
+    else:
+        turnOffLuminosity(PIN_LED_LUMINOSIDADE)
 
+    # Rega dentro do horário
+    if PRETENDIDO_REGA_HORA_INICIO is not None and PRETENDIDO_REGA_HORA_FIM is not None and PRETENDIDO_REGA_MINUTO_INICIO is not None and PRETENDIDO_REGA_MINUTO_FIM is not None and PRETENDIDO_REGA_HUMIDADE is not None and PRETENDIDO_REGA_SEGUNDOS is not None:
+        #07:00 - 23:00
+        if int(PRETENDIDO_REGA_HORA_INICIO) < int(PRETENDIDO_REGA_HORA_FIM):
+            if PRETENDIDO_REGA_HORA_INICIO < now.hour < PRETENDIDO_REGA_HORA_FIM:
+                if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                    waterPump(PIN_BOMBA_AGUA)
+            elif now.hour == PRETENDIDO_REGA_HORA_INICIO and now.minute >= PRETENDIDO_REGA_MINUTO_INICIO:
+                if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                    waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+            elif now.hour == PRETENDIDO_REGA_HORA_FIM and now.minute < PRETENDIDO_REGA_MINUTO_FIM:
+                if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                    waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+        #23:00 - 03:00
+        else:
+            if PRETENDIDO_REGA_HORA_INICIO > now.hour:
+                if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                    waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+            elif now.hour == PRETENDIDO_REGA_HORA_INICIO and now.minute >= PRETENDIDO_REGA_MINUTO_INICIO:
+                if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                    waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+            elif now.hour < PRETENDIDO_REGA_HORA_FIM:
+                if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                    waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
+            elif now.hour == PRETENDIDO_REGA_HORA_FIM and now.minute < PRETENDIDO_REGA_MINUTO_FIM:
+                if PRETENDIDO_REGA_HUMIDADE > int(hum_perc):
+                    waterPump(PIN_BOMBA_AGUA, PRETENDIDO_REGA_SEGUNDOS)
 
-
-        #---
-        #	time.sleep(5)
-        #	waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
-
-        #csv.write(str(humidity) + "," + str(localtime))
-        #if(humidity < 1000):
-        #    waterPump(PIN_BOMBA_AGUA, TEMPO_BOMBA_AGUA)
-        #    csv.write(", Ativar Rega!")
-        #csv.write("\n")
-        #csv.close()
-        #time.sleep(898) #15min de espera
-	break
 except KeyboardInterrupt:
     print ("\nCtrl-C pressed.  Program exiting...")
 finally:
