@@ -22,7 +22,7 @@ def soilHumidity(pin_to_circuit):
         # Count until the pin goes high
         while (GPIO.input(pin_to_circuit) == GPIO.LOW):
             count += 1
-            if(count >= 100000):
+            if(count >= 40000):
                 break
 
     except KeyboardInterrupt:
