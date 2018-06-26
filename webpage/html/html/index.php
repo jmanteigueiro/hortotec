@@ -10,10 +10,10 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
     <link rel="stylesheet" href="assets/css/main.css" />
-    <!-- https://stackoverflow.com/questions/21096034/kill-a-process-from-website -->
     <noscript><link rel="stylesheet" href="assets/css/noscript.css" /></noscript>
 </head>
 <body class="is-preload">
+
 <!-- Wrapper -->
 <div id="wrapper" class="divided">
 
@@ -23,8 +23,8 @@
             <h1>Hortotec</h1>
             <p class="major">Uma estufa inteligente</p>
             <ul class="actions stacked">
-                <li><a href="#first" class="button">Dados atuais</a></li>
-                <li><a href="#second" class="button">Configuração</a></li>
+                <li><a href="#first" class="button big wide smooth-scroll-middle">Dados atuais</a></li>
+                <li><a href="#second" class="button big wide smooth-scroll-middle">Configuração</a></li>
             </ul>
         </div>
         <div class="image">
@@ -41,46 +41,13 @@
     $humidity = $data[0];
     $luminosity = $data[1];
     $temperature = $data[2];
-    $air_humidity = $data[3];
-    $last_update = $data[4];
+    $last_update = $data[3];
     ?>
 
-    <?php
-    $fp = new SPLFileObject('config.txt');
-    foreach($fp as $line2) {
-        $data2 = preg_split("/[,]/", $line2);
-    }
-    $startLum = $data2[0];
-    $endLum = $data2[1];
-    $percentLum = $data2[2];
-    $startRega = $data2[3];
-    $endRega = $data2[4];
-    $percentRega = $data2[5];
-    $tempoRega = $data2[6];
-    $temp = $data2[7];
-    if($startLum == "")
-        $startLum = "02:00";
-    if($endLum == "")
-        $endLum = "08:00";
-    if($percentLum == "")
-        $percentLum = "30";
-    if($startRega == "")
-        $startRega = "19:00";
-    if($endRega == "")
-        $endRega = "23:00";
-    if($percentRega == "")
-        $percentRega = "5";
-    if($tempoRega == "")
-        $tempoRega = "3";
-    if($temp == "")
-        $tempPret = "25";
-
-    ?>
-
-    <section id="first" class="banner style1 orient-right content-align-left image-position-center fullscreen onscroll-image-fade-in onscroll-content-fade-left">
+    <section class="spotlight style1 orient-right content-align-left image-position-center onscroll-image-fade-in">
         <div class="content">
             <h2>Dados no momento</h2>
-            <section>
+            <section id="first">
                 <p>Temperatura:
                     <strong>
                         <?php  echo htmlspecialchars($temperature);?>
@@ -89,13 +56,6 @@
                 <p>Humidade do Solo:
                     <strong>
                         <?php  echo htmlspecialchars($humidity);?>
-                        %
-                    </strong>
-                </p>
-
-                <p>Humidade do Ar:
-                    <strong>
-                        <?php  echo htmlspecialchars($air_humidity);?>
                         %
                     </strong>
                 </p>
@@ -115,64 +75,52 @@
 
     <!-- Three -->
 
-    <section id="second" class="wrapper style1 align-center onscroll-content-fade-right">
+    <section class="wrapper style1 align-center">
         <form action="processing.php" method="POST">
             <div class="inner">
                 <br>
-                <div class ="items style1 align-center onscroll-content-fade-right">
-                    <input type="submit" name="submit" class="button primary" value="Save Data">
-                </div>
+                <input type="submit" name="submit" class="btn btn-info" value="Save Data">
                 <div class="items style1 medium onscroll-fade-in">
-                    <section>
+                    <section id="second">
                         <span class="icon style2 major fa-lightbulb-o"></span>
                         <h3>Luminosidade</h3>
-                        <p><label>Ínício [HH:MM]</label>
+                        <p><label>Ínício [Horas]</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumini"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($startLum)?>></p>
-                        <p><label>Fim [HH:MM]</label>
+                                   aria-describedby="emailHelp" placeholder="07:00"></p>
+                        <p><label>Fim [Horas]</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumifim"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($endLum)?>></p>
-                        <p><label>Percentagem pretendida [0-100]%</label>
+                                   aria-describedby="emailHelp" placeholder="20:00"></p>
+                        <p><label>Automático [0-100]</label>
                             <input type="text" style="text-align: center" class="form-control" name="lumifx"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($percentLum)?>></p>
+                                   aria-describedby="emailHelp" placeholder="50"></p>
                     </section>
                     <section>
                         <span class="icon style2 major fa fa-tint"></span>
                         <h3>Rega</h3>
-                        <p><label>Ínício [HH:MM]</label>
+                        <p><label>Ínício [Horas]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaxhoras"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($startRega)?>></p>
-                        <p><label>Fim [HH:MM]</label>
+                                   aria-describedby="emailHelp" placeholder="19:00"></p>
+                        <p><label>Fim [Horas]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaifhumambiente"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($endRega)?>></p>
-                        <p><label>Percentagem pretendida [0-100]%</label>
+                                   aria-describedby="emailHelp" placeholder="20:00"></p>
+                        <p><label>Automático [0-100]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regaifhumsolo"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($percentRega)?>></p>
-                        <p><label>Tempo de rega [0-15]seg</label>
+                                   aria-describedby="emailHelp" placeholder="50"></p>
+                        <p><label>Segundos [0-15]</label>
                             <input type="text" style="text-align: center" class="form-control" name="regasegundos"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($tempoRega)?>>
+                                   aria-describedby="emailHelp" placeholder="5">
                     </section>
                     <section>
                         <span class="icon style2 major fa fa-thermometer-3"></span>
                         <h3>Ambiente</h3>
-                        <p><label>Temperatura pretendida [ºC]</label>
+                        <p><label>Temperatura [ºC]</label>
                             <input type="text" style="text-align: center" class="form-control" name="aquecimento"
-                                   aria-describedby="emailHelp" value=<?php echo htmlspecialchars($tempPret)?>></p>
+                                   aria-describedby="emailHelp" placeholder="25"></p>
                     </section>
                 </div>
             </div>
         </form>
     </section>
-
-    <footer class="wrapper style1 align-center">
-        <div class="inner">
-            <ul class="icons">
-                <li><a href="mailto:hortotec@ubi.pt" class="icon style2 fa-envelope"><span class="label">Email</span></a></li>
-                <li><a href="https://github.com/jmanteigueiro/hortotec" class="icon style2 fa-hashtag"><span class="label">GitHub</span></a></li>
-            </ul>
-            <p>© Hortotec</p>
-        </div>
-    </footer>
 
 </div>
 
