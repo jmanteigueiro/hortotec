@@ -140,7 +140,7 @@ try:
         soil_humidity = soilHumidity(PIN_SENSOR_HUMIDADE_TERRA)
         luminosity = luminosity(PIN_SENSOR_LUMINOSIDADE)
         [temperature, air_humidity] = humidityTemperature(DHT, PIN_SENSOR_TEMPERATURA)
-        hum_perc = percentagem(40000, soil_humidity)
+        hum_perc = percentagem(100000, soil_humidity)
         lum_perc = percentagem_luminosidade(500, 50000, luminosity)
         print("HUM SOLO: " + str(soil_humidity) + " Percent: " + str(('%.1f' % hum_perc).rstrip('0').rstrip('.')))
         print("LUM: " + str(luminosity) + " Percent: " + str(('%.1f' % lum_perc).rstrip('0').rstrip('.')))
